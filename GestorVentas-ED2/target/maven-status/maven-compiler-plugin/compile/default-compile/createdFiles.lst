@@ -1,0 +1,15 @@
+controlador\ControladorUsuario.class
+Servlets\SvRegistrarUsuario.class
+Conexion\Conectar.class
+Servlets\SvAniadirArticulo.class
+Servlets\SvInicioSesion.class
+Servlets\SvEliminarUsuario.class
+Servlets\SvEliminarArticulo.class
+com\mycompany\gestorventas\ed2\JakartaRestConfiguration.class
+com\mycompany\gestorventas\ed2\resources\JakartaEE8Resource.class
+controlador\ControladorArticulo.class
+Servlets\SvEditarUsuario.class
+controlador\ControladorInicioSesion.class
+modelo\Usuario.class
+Servlets\SvEditarArticulo.class
+modelo\Articulo.class
