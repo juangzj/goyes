@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import modelo.Usuario;
 
 /**
  *
@@ -136,6 +137,55 @@ public class ControladorInicioSesion {
         }
 
         return rolUsuario; // Devuelve el rol del usuario o null si no se encontró
+    }
+    
+        /**
+     * Metodo para obtener usuario segun el id
+     *
+     * @param email
+     * @return
+     */
+    public Usuario obtenerUsuario(String email) {
+        Usuario usuario = null;
+        Connection conexion = null;
+        PreparedStatement statement = null;
+        ResultSet resultado = null;
+
+        try {
+            conexion = Conectar.getConexion(); // Conectar a la base de datos
+            String sql = "SELECT * FROM usuarios WHERE email = ?";
+            statement = conexion.prepareStatement(sql);
+            statement.setString(1, email); // Asignar el email al parámetro de la consulta
+
+            resultado = statement.executeQuery(); // Ejecutar la consulta
+
+            if (resultado.next()) { // Si se encontró un usuario
+                int id = resultado.getInt("id");
+                String nombre = resultado.getString("nombre");
+                String contrasenia = resultado.getString("contrasenia");
+                String rol = resultado.getString("rol");
+
+                usuario = new Usuario(id, nombre, email, contrasenia, rol);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Manejar excepciones en caso de error
+        } finally {
+            try {
+                if (resultado != null) {
+                    resultado.close();
+                }
+                if (statement != null) {
+                    statement.close();
+                }
+                if (conexion != null) {
+                    conexion.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return usuario;
     }
 
 }

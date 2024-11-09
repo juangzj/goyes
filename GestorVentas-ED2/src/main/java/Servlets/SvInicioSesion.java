@@ -8,6 +8,8 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import modelo.Usuario;
 
 /**
  *
@@ -45,7 +47,8 @@ public class SvInicioSesion extends HttpServlet {
             String resultadoInicioSesion = controladorUsuario.iniciarSesion(gmail, contrasenia);
 
             if (resultadoInicioSesion != null) {
-
+                
+                
                 if (resultadoInicioSesion.equals("Administrador")) {
                     response.sendRedirect("administradorVista.jsp");
                 }
@@ -55,7 +58,16 @@ public class SvInicioSesion extends HttpServlet {
                 if (resultadoInicioSesion.equals("Vendedor")) {
                     System.out.println("a");
                 }
-
+                
+                //Obtenemos el usuario que esta en sesion
+                Usuario usuarioEnSesion = controladorUsuario.obtenerUsuario(gmail);
+                
+                //Obtenemos la sesion 
+                HttpSession miSesion = request.getSession();
+                //Enviamos al usuario mediante las sesion
+                miSesion.setAttribute("usuarioEnSesion" ,usuarioEnSesion );
+                
+                
             } else {
                 response.sendRedirect("index.jsp");
             }
