@@ -1,12 +1,18 @@
 package controlador;
 
 import Conexion.Conectar;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.servlet.http.HttpServletResponse;
 import modelo.Articulo;
 
 /**
@@ -19,26 +25,30 @@ public class ControladorArticulo {
     public ControladorArticulo() {
 
     }
+
     /**
-     * Metodo para obtener los productos existentes
-     * @return 
+     * Método para obtener los productos existentes
+     *
+     * @return Lista de objetos Articulo con los datos de cada producto
      */
     public List<Articulo> darArticulos() {
         List<Articulo> articulos = new ArrayList<>();
         Connection conexion = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
 
         try {
             // Obtener la conexión a la base de datos
             conexion = Conectar.getConexion();
 
-            // SQL para seleccionar todos los artículos
-            String sql = "SELECT id, nombre, descripcion, precio, cantidad_stock FROM articulos";
+            // SQL para seleccionar todos los artículos, incluyendo imagen y nombre de imagen
+            String sql = "SELECT id, nombre, descripcion, precio, cantidad_stock, nombre_imagen, imagen FROM articulos";
 
             // Preparar la sentencia
-            PreparedStatement pstmt = conexion.prepareStatement(sql);
+            pstmt = conexion.prepareStatement(sql);
 
             // Ejecutar la consulta
-            ResultSet rs = pstmt.executeQuery();
+            rs = pstmt.executeQuery();
 
             // Iterar sobre los resultados
             while (rs.next()) {
@@ -48,7 +58,9 @@ public class ControladorArticulo {
                         rs.getString("nombre"),
                         rs.getString("descripcion"),
                         rs.getDouble("precio"),
-                        rs.getInt("cantidad_stock") // Cambia esto a la columna correcta
+                        rs.getInt("cantidad_stock"),
+                        rs.getString("nombre_imagen"),
+                        rs.getBytes("imagen") // Obtener la imagen en bytes
                 );
 
                 // Agregar el artículo a la lista
@@ -58,13 +70,19 @@ public class ControladorArticulo {
         } catch (SQLException e) {
             e.printStackTrace(); // Manejar errores de SQL
         } finally {
-            // Cerrar la conexión
-            if (conexion != null) {
-                try {
-                    conexion.close();
-                } catch (SQLException e) {
-                    e.printStackTrace(); // Manejar errores al cerrar la conexión
+            // Cerrar recursos
+            try {
+                if (rs != null) {
+                    rs.close();
                 }
+                if (pstmt != null) {
+                    pstmt.close();
+                }
+                if (conexion != null) {
+                    conexion.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace(); // Manejar errores al cerrar la conexión
             }
         }
 
@@ -78,9 +96,11 @@ public class ControladorArticulo {
      * @param descripcion
      * @param precio
      * @param cantidad
+     * @param nombreImagen
+     * @param imagen
      * @return
      */
-    public boolean agregarProducto(String nombre, String descripcion, double precio, int cantidad) {
+    public boolean agregarProducto(String nombre, String descripcion, double precio, int cantidad, String nombreImagen, byte[] imagen) {
         boolean productoAgregado = false;
         Connection conexion = null;
         PreparedStatement preparedStatement = null;
@@ -90,7 +110,7 @@ public class ControladorArticulo {
             conexion = Conectar.getConexion();
 
             // Definir la consulta SQL para insertar el producto
-            String sql = "INSERT INTO articulos (nombre, descripcion, precio, cantidad_stock) VALUES (?, ?, ?, ?)";
+            String sql = "INSERT INTO articulos (nombre, descripcion, precio, cantidad_stock, nombre_imagen, imagen) VALUES (?, ?, ?, ?, ?, ?)";
 
             // Preparar la declaración
             preparedStatement = conexion.prepareStatement(sql);
@@ -98,6 +118,8 @@ public class ControladorArticulo {
             preparedStatement.setString(2, descripcion);
             preparedStatement.setDouble(3, precio);
             preparedStatement.setInt(4, cantidad);
+            preparedStatement.setString(5, nombreImagen);
+            preparedStatement.setBytes(6, imagen); // Establecer el campo imagen como byte[]
 
             // Ejecutar la inserción
             int filasAfectadas = preparedStatement.executeUpdate();
@@ -225,6 +247,82 @@ public class ControladorArticulo {
         }
 
         return articuloEditado;
+    }
+
+    // Método para mostrar la imagen
+    public void mostrarImagen(int id, HttpServletResponse response) throws IOException {
+        Connection conexion = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        InputStream inputStream = null;
+        OutputStream outputStream = null;
+        BufferedInputStream bufferedInputStream = null;
+        BufferedOutputStream bufferedOutputStream = null;
+
+        try {
+            // Configurar la respuesta HTTP para enviar la imagen
+            response.setContentType("image/jpeg");  // Cambiar según el tipo de imagen
+            outputStream = response.getOutputStream();
+
+            // Obtener la conexión a la base de datos
+            conexion = Conectar.getConexion();
+
+            // Consulta SQL para obtener la imagen del artículo por id
+            String sql = "SELECT imagen FROM articulos WHERE id = ?";
+            ps = conexion.prepareStatement(sql);
+            ps.setInt(1, id); // Establecer el id del artículo
+
+            // Ejecutar la consulta
+            rs = ps.executeQuery();
+
+            // Verificar si el artículo existe
+            if (rs.next()) {
+                // Obtener la imagen como InputStream
+                inputStream = rs.getBinaryStream("imagen");
+                bufferedInputStream = new BufferedInputStream(inputStream);
+                bufferedOutputStream = new BufferedOutputStream(outputStream);
+
+                // Leer la imagen en bloques y escribirla en el OutputStream
+                int i;
+                while ((i = bufferedInputStream.read()) != -1) {
+                    bufferedOutputStream.write(i);
+                }
+                bufferedOutputStream.flush(); // Asegurarse de que se haya enviado todo el contenido
+            } else {
+                // Si no se encuentra la imagen, responder con error o imagen predeterminada
+                response.sendError(HttpServletResponse.SC_NOT_FOUND, "Imagen no encontrada.");
+            }
+
+        } catch (SQLException | IOException e) {
+            // Manejar errores
+            e.printStackTrace();
+            try {
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error al procesar la imagen.");
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
+        } finally {
+            // Cerrar los recursos en el bloque finally
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (ps != null) {
+                    ps.close();
+                }
+                if (conexion != null) {
+                    conexion.close();
+                }
+                if (bufferedInputStream != null) {
+                    bufferedInputStream.close();
+                }
+                if (bufferedOutputStream != null) {
+                    bufferedOutputStream.close();
+                }
+            } catch (SQLException | IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 }
