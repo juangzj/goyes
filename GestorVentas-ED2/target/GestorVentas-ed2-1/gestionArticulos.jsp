@@ -59,7 +59,9 @@
                                 data-nombre="<%= articulo.getNombre()%>"
                                 data-descripcion="<%= articulo.getDescripcion()%>"
                                 data-precio="<%= articulo.getPrecio()%>"
-                                data-stock="<%= articulo.getCantidad()%>" >
+                                data-stock="<%= articulo.getCantidad()%>"
+                                 data-imagenBinarios="<%=imagenBase64%>"
+                                data-extensionImagen="<%=extensionImagen%>">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
                                 <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.5.5 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11z"/>
                             </svg>
@@ -249,15 +251,21 @@
                                 <h1 class="modal-title fs-5" id="exampleModalLabel">Editar</h1>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
-                            <form action="SvEditarArticulo" method="POST">
+                            <form action="SvEditarArticulo" method="POST" enctype="multipart/form-data"  >
                                 <div class="modal-body">
-                                    <p>¿Estás seguro de que deseas EDITAR el articulo con ID: <span id="articuloIdEditar"></span>?</p>
+                                    
 
-                                    <form action="SvAgregarArticulo" method="POST">
+                                    <form action="SvAgregarArticulo" method="POST" enctype="multipart/form-data" >
+                                        <p>¿Estás seguro de que deseas EDITAR el articulo con ID: <span id="articuloIdEditar"></span>?</p>
+                                        <input type="number" name="idEditar" id="idEditar"  class="form-control" placeholder="Ingrese el nombre" autofocus required  style="display: none;">
                                         <div class="form-group">
                                             <label>nombre:</label>
                                             <input type="text" name="nombreEditar" id="nombreEditar" class="form-control" placeholder="ingrese el nombre" autofocus required >
                                         </div><br>
+                                        <div class="mb-3">
+                                            <label for="formFile" class="form-label">Selecciona una imagen</label>
+                                            <input class="form-control" type="file" id="formFile" name="imagenEditar" required>
+                                        </div>
                                             <div class="form-group">
                                                 <label>Descripcion:</label>
                                                 <input type="text" name="descripcionEditar" id="descripcionEditar" class="form-control" placeholder="ingrese la descripcion" required >
@@ -337,6 +345,35 @@ $(document).ready(function(){
 
 </script>
 
+<!-- Scrip para mostrar la informacion en el modal de editar -->
+ <script>
+    
+    $(document).ready(function(){
+    // Manejar el evento cuando se hace clic en el enlace de la modal
+    $('#exampleModalEditar').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget); // Botón que abrió la modal
+        var id = button.data('id');
+        var nombre = button.data('nombre');
+        var descripcion = button.data('descripcion');
+        var precio = button.data('precio');
+        var stock = button.data('stock');
+        var imagenBinarios = button.data('imagenbinarios'); // La cadena base64 de la imagen
+        var extensionImagen = button.data('extensionimagen'); // La extensión de la imagen (jpg o png)
+        
+        // Actualizar el contenido de la modal
+        var modal = $(this);
+        modal.find('#nombreEditar').val(nombre);
+        modal.find('#descripcionEditar').val(descripcion);
+        modal.find('#precioEditar').val(precio);
+        modal.find('#stockEditar').val(stock);
+        modal.find('#idEditar').val(id);
+        
+         // Asignar la imagen en base64 al atributo src de la etiqueta <img>
+        modal.find('#imagenEditar').attr('src', 'data:image/' + extensionImagen + ';base64,' + imagenBinarios);
+    });
+});
+
+</script>
 <!-- Script para obtener el id del articulo que se va a editar y despues enviarla por ajaxx al servlet -->
 <script>
     // Captur clic y mandar el id del articulo que se va a editar 
@@ -359,28 +396,6 @@ $(document).ready(function(){
             }
         });
     });
-</script>
-<!-- Scrip para mostrar la informacion en el modal de editar -->
- <script>
-    
-    $(document).ready(function(){
-    // Manejar el evento cuando se hace clic en el enlace de la modal
-    $('#exampleModalEditar').on('show.bs.modal', function (event) {
-        var button = $(event.relatedTarget); // Botón que abrió la modal
-        var nombre = button.data('nombre');
-        var descripcion = button.data('descripcion');
-        var precio = button.data('precio');
-        var stock = button.data('stock');
-        
-        // Actualizar el contenido de la modal
-        var modal = $(this);
-        modal.find('#nombreEditar').val(nombre);
-        modal.find('#descripcionEditar').val(descripcion);
-        modal.find('#precioEditar').val(precio);
-        modal.find('#stockEditar').val(stock);
-    });
-});
-
 </script>
 
 <%@include file="libs/foother.jsp" %>
