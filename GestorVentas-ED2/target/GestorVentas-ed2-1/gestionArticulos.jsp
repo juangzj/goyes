@@ -255,7 +255,7 @@
                                 <div class="modal-body">
                                     
 
-                                    <form action="SvAgregarArticulo" method="POST" enctype="multipart/form-data" >
+                                    <form action="SvEditarArticulo" method="POST" enctype="multipart/form-data" >
                                         <p>¿Estás seguro de que deseas EDITAR el articulo con ID: <span id="articuloIdEditar"></span>?</p>
                                         <input type="number" name="idEditar" id="idEditar"  class="form-control" placeholder="Ingrese el nombre" autofocus required  style="display: none;">
                                         <div class="form-group">

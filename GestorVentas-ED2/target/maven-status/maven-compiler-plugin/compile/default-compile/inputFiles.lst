@@ -1,5 +1,8 @@
 E:\Programacion\Neatbeans\Estrutura de datos 2\TRABAJOS VENTAS\goyes\GestorVentas-ED2\src\main\java\controlador\ControladorInicioSesion.java
+E:\Programacion\Neatbeans\Estrutura de datos 2\TRABAJOS VENTAS\goyes\GestorVentas-ED2\src\main\java\modelo\Categoria.java
+E:\Programacion\Neatbeans\Estrutura de datos 2\TRABAJOS VENTAS\goyes\GestorVentas-ED2\src\main\java\Servlets\SvAniadirCategoria.java
 E:\Programacion\Neatbeans\Estrutura de datos 2\TRABAJOS VENTAS\goyes\GestorVentas-ED2\src\main\java\modelo\Articulo.java
+E:\Programacion\Neatbeans\Estrutura de datos 2\TRABAJOS VENTAS\goyes\GestorVentas-ED2\src\main\java\controlador\ControladorCategoria.java
 E:\Programacion\Neatbeans\Estrutura de datos 2\TRABAJOS VENTAS\goyes\GestorVentas-ED2\src\main\java\Conexion\Conectar.java
 E:\Programacion\Neatbeans\Estrutura de datos 2\TRABAJOS VENTAS\goyes\GestorVentas-ED2\src\main\java\com\mycompany\gestorventas\ed2\JakartaRestConfiguration.java
 E:\Programacion\Neatbeans\Estrutura de datos 2\TRABAJOS VENTAS\goyes\GestorVentas-ED2\src\main\java\modelo\Usuario.java
@@ -7,6 +10,8 @@ E:\Programacion\Neatbeans\Estrutura de datos 2\TRABAJOS VENTAS\goyes\GestorVenta
 E:\Programacion\Neatbeans\Estrutura de datos 2\TRABAJOS VENTAS\goyes\GestorVentas-ED2\src\main\java\controlador\ControladorArticulo.java
 E:\Programacion\Neatbeans\Estrutura de datos 2\TRABAJOS VENTAS\goyes\GestorVentas-ED2\src\main\java\Servlets\SvEditarUsuario.java
 E:\Programacion\Neatbeans\Estrutura de datos 2\TRABAJOS VENTAS\goyes\GestorVentas-ED2\src\main\java\Servlets\SvInicioSesion.java
+E:\Programacion\Neatbeans\Estrutura de datos 2\TRABAJOS VENTAS\goyes\GestorVentas-ED2\src\main\java\Servlets\SvEliminarCategoria.java
+E:\Programacion\Neatbeans\Estrutura de datos 2\TRABAJOS VENTAS\goyes\GestorVentas-ED2\src\main\java\Servlets\SvEditarCategoria.java
 E:\Programacion\Neatbeans\Estrutura de datos 2\TRABAJOS VENTAS\goyes\GestorVentas-ED2\src\main\java\Servlets\SvEliminarUsuario.java
 E:\Programacion\Neatbeans\Estrutura de datos 2\TRABAJOS VENTAS\goyes\GestorVentas-ED2\src\main\java\controlador\ControladorUsuario.java
 E:\Programacion\Neatbeans\Estrutura de datos 2\TRABAJOS VENTAS\goyes\GestorVentas-ED2\src\main\java\Servlets\SvAniadirArticulo.java
