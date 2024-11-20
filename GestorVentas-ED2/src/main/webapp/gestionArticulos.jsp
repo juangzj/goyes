@@ -114,6 +114,66 @@
             </div>
         </div>
 
+        <!-- Modal Para Editar un Artículo -->
+        <div class="modal fade" id="exampleModalEditar" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <!-- Encabezado del Modal -->
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Editar Artículo</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <!-- Formulario -->
+                    <form action="SvEditarArticulo" method="POST" enctype="multipart/form-data">
+                        <div class="modal-body">
+                            <!-- ID del Artículo -->
+                            <input type="hidden" name="idEditar" id="idEditar" required>
+
+                                <!-- Nombre -->
+                                <div class="mb-3">
+                                    <label for="nombreEditar" class="form-label">Nombre:</label>
+                                    <input type="text" name="nombreEditar" id="nombreEditar" class="form-control" placeholder="Ingrese el nombre" autofocus>
+                                </div>
+
+                                <!-- Imagen -->
+                                <div class="mb-3">
+                                    <label for="formFile" class="form-label">Selecciona una imagen:</label>
+                                    <input class="form-control" type="file" id="formFile" name="imagenEditar">
+                                </div>
+
+                                <!-- Descripción -->
+                                <div class="mb-3">
+                                    <label for="descripcionEditar" class="form-label">Descripción:</label>
+                                    <textarea name="descripcionEditar" id="descripcionEditar" class="form-control" placeholder="Ingrese la descripción" required></textarea>
+                                </div>
+
+                                <!-- Precio -->
+                                <div class="mb-3">
+                                    <label for="precioEditar" class="form-label">Precio:</label>
+                                    <input type="number" name="precioEditar" id="precioEditar" class="form-control" placeholder="Ingrese el precio" step="0.01" required>
+                                </div>
+
+                                <!-- Stock -->
+                                <div class="mb-3">
+                                    <label for="stockEditar" class="form-label">Stock:</label>
+                                    <input type="number" name="stockEditar" id="stockEditar" class="form-control" placeholder="Ingrese la cantidad" required>
+                                </div>
+                        </div>
+
+                        <!-- Botones del Modal -->
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------> 
+
+
 
         <!-- Modal Para Eliminar un artículo -->
         <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -230,50 +290,7 @@
 
 
 
-        <!-- Modal Para Editar un articulo-->
-        <div class="modal fade" id="exampleModalEditar" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-
-                        <h1 class="modal-title fs-5" id="exampleModalLabel">Editar</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <form action="SvEditarArticulo" method="POST" enctype="multipart/form-data"  >
-                        <div class="modal-body">
-
-
-                            <form action="SvEditarArticulo" method="POST" enctype="multipart/form-data" >
-                                <p>¿Estás seguro de que deseas EDITAR el articulo con ID: <span id="articuloIdEditar"></span>?</p>
-                                <input type="number" name="idEditar" id="idEditar"  class="form-control" placeholder="Ingrese el nombre" autofocus required  style="display: none;">
-                                    <div class="form-group">
-                                        <label>nombre:</label>
-                                        <input type="text" name="nombreEditar" id="nombreEditar" class="form-control" placeholder="ingrese el nombre" autofocus required >
-                                    </div><br>
-                                        <div class="mb-3">
-                                            <label for="formFile" class="form-label">Selecciona una imagen</label>
-                                            <input class="form-control" type="file" id="formFile" name="imagenEditar" required>
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Descripcion:</label>
-                                            <input type="text" name="descripcionEditar" id="descripcionEditar" class="form-control" placeholder="ingrese la descripcion" required >
-                                        </div><br>
-                                            <div class="form-group">
-                                                <label>Precio:</label>
-                                                <input type="number" name="precioEditar" id="precioEditar" class="form-control" placeholder="ingrese el precio" required >
-                                            </div><br>
-                                                <div class="form-group">
-                                                    <label>Stock:</label>
-                                                    <input type="number" name="stockEditar" id="stockEditar" class="form-control" placeholder="ingrese la cantidad" required >
-                                                </div><br>
-
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                                        <button type="submit" class="btn btn-primary">Editar</button>
-                                                    </div>
-                                                    </form>
-                                                    <!---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------> 
-
+   
 
 
                                                     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2b1BbG4D4pI4IsxKTxWz9fM5kKNVYN6g0sOKjxCBbCgAYy7eIvN1zzBrCTE" crossorigin="anonymous"></script>
@@ -372,5 +389,38 @@
                                                             });
                                                         });
                                                     </script>
+                                                    <script>
+    $(document).ready(function () {
+        // Cuando se muestre el modal de editar
+        $('#exampleModalEditar').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget); // El botón que activó el modal
+
+            // Extraer los datos del botón mediante data-*
+            var id = button.data('id');
+            var nombre = button.data('nombre');
+            var descripcion = button.data('descripcion');
+            var precio = button.data('precio');
+            var stock = button.data('stock');
+            var imagenBinarios = button.data('imagenbinarios');
+            var extensionImagen = button.data('extensionimagen');
+
+            // Actualizar los campos del modal con los datos extraídos
+            var modal = $(this);
+            modal.find('#idEditar').val(id);  // Asigna el ID del artículo
+            modal.find('#nombreEditar').val(nombre);  // Asigna el nombre
+            modal.find('#descripcionEditar').val(descripcion);  // Asigna la descripción
+            modal.find('#precioEditar').val(precio);  // Asigna el precio
+            modal.find('#stockEditar').val(stock);  // Asigna el stock
+
+            // Si hay una imagen base64, asignarla
+            if (imagenBinarios && extensionImagen) {
+                modal.find('#imagenVer').attr('src', 'data:image/' + extensionImagen + ';base64,' + imagenBinarios);
+            } else {
+                modal.find('#imagenVer').attr('src', 'default-image.jpg');  // Imagen predeterminada si no hay imagen
+            }
+        });
+    });
+                                                    </script>
+
 
                                                     <%@include file="libs/foother.jsp" %>

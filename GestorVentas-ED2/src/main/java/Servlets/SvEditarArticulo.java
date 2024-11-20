@@ -1,4 +1,3 @@
-
 package Servlets;
 
 import controlador.ControladorArticulo;
@@ -28,50 +27,62 @@ public class SvEditarArticulo extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
-         
+
         }
     }
 
- 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         processRequest(request, response);
     }
 
-    
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
+        // Obtener los parámetros de la solicitud
         String idArticulo = request.getParameter("idEditar");
         String nombre = request.getParameter("nombreEditar");
         String descripcion = request.getParameter("descripcionEditar");
         String precio = request.getParameter("precioEditar");
         String stock = request.getParameter("stockEditar");
         Part imagen = request.getPart("imagenEditar");
-        
-        
-      
-        if(idArticulo != null && nombre != null && descripcion != null && precio != null && stock != null && imagen != null){
-            
-              //Obtenemos el nombre de la imagen
-            String nombreImagen = Paths.get(imagen.getSubmittedFileName()).getFileName().toString();
-            
-            //Obtenemos los bytes de la imagen
-            byte[] datosImagen;
-            try(InputStream inputStream = imagen.getInputStream()){
+
+        // Validación de los parámetros
+        if (idArticulo == null || nombre == null || descripcion == null || precio == null || stock == null) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Faltan parámetros requeridos.");
+            return;
+        }
+
+        // Obtener los valores para la imagen si se cargó una nueva
+        byte[] datosImagen = null;
+        String nombreImagen = null;
+
+        if (imagen.getSize() > 0) {
+            // Si se cargó una nueva imagen, obtener los datos
+            try (InputStream inputStream = imagen.getInputStream()) {
                 datosImagen = inputStream.readAllBytes();
             }
-            
-            
-            controladorArticulo.editarArticulo(Integer.parseInt(idArticulo), nombre, descripcion, Double.parseDouble(precio), Integer.parseInt(stock), nombreImagen, datosImagen );
+
+            // Obtener el nombre de la imagen
+            nombreImagen = Paths.get(imagen.getSubmittedFileName()).getFileName().toString();
         }
-        
+
+        // Verificar si se cargó una imagen
+        if (datosImagen == null) {
+            // Si no se cargó imagen, actualizar el artículo sin imagen
+            controladorArticulo.editarArticulo(Integer.parseInt(idArticulo), nombre, descripcion, Double.parseDouble(precio), Integer.parseInt(stock));
+        } else {
+            // Si se cargó una nueva imagen, actualizar el artículo con la imagen
+            controladorArticulo.editarArticuloConImagen(Integer.parseInt(idArticulo), nombre, descripcion, Double.parseDouble(precio), Integer.parseInt(stock), nombreImagen, datosImagen);
+        }
+
+        // Redirigir al usuario después de la actualización
         response.sendRedirect("gestionArticulos.jsp");
+
     }
 
-    
     @Override
     public String getServletInfo() {
         return "Short description";

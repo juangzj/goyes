@@ -171,6 +171,65 @@ public class ControladorArticulo {
 
         return articuloEliminado;
     }
+
+    /**
+     * Metodo para editar un articulo
+     *
+     * @param id
+     * @param nombre
+     * @param descripcion
+     * @param precio
+     * @param stock
+     * @return
+     */
+    public boolean editarArticulo(int id, String nombre, String descripcion, double precio, int stock) {
+        boolean articuloEditado = false;
+        Connection conexion = null;
+        PreparedStatement stmt = null;
+
+        try {
+            // Establecer la conexión a la base de datos
+            conexion = Conectar.getConexion();
+
+            // SQL para actualizar el artículo en la base de datos
+            String sql = "UPDATE articulos SET nombre = ?, descripcion = ?, precio = ?, cantidad_stock = ? WHERE id = ?";
+
+            // Preparar la sentencia SQL
+            stmt = conexion.prepareStatement(sql);
+
+            // Establecer los valores de los parámetros
+            stmt.setString(1, nombre);
+            stmt.setString(2, descripcion);
+            stmt.setDouble(3, precio);
+            stmt.setInt(4, stock);
+            stmt.setInt(5, id);
+
+            // Ejecutar la actualización
+            int filasAfectadas = stmt.executeUpdate();
+
+            // Si se ha actualizado al menos un registro, se considera que la operación fue exitosa
+            if (filasAfectadas > 0) {
+                articuloEditado = true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Manejo de excepciones
+        } finally {
+            // Cerrar los recursos
+            try {
+                if (stmt != null) {
+                    stmt.close();
+                }
+                if (conexion != null) {
+                    conexion.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace(); // Manejo de excepciones
+            }
+        }
+
+        return articuloEditado;
+    }
+
     /**
      * Método para editar un artículo según el ID.
      *
@@ -184,7 +243,7 @@ public class ControladorArticulo {
      * @return true si el artículo fue editado correctamente, false en caso
      * contrario
      */
-    public boolean editarArticulo(int id, String nombre, String descripcion, double precio, int stock, String nombreImagen, byte[] imagen) {
+    public boolean editarArticuloConImagen(int id, String nombre, String descripcion, double precio, int stock, String nombreImagen, byte[] imagen) {
         boolean articuloEditado = false;
         Connection conexion = null;
         PreparedStatement stmt = null;
