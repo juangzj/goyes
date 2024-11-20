@@ -216,4 +216,60 @@ public class ControladorCategoria {
         return categoriaEditada;
     }
 
+    /**
+     * Metodo para obtener una categoria segun el id
+     *
+     * @param idCategoria El ID de la categoria a buscar
+     * @return La categoria correspondiente o null si no se encuentra
+     */
+    public Categoria obtenerCategoriaId(int idCategoria) {
+        Categoria categoria = null;
+        Connection conexion = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+
+        try {
+            // Obtener la conexión a la base de datos
+            conexion = Conectar.getConexion();
+
+            // Consulta SQL para buscar la categoria por su ID
+            String sql = "SELECT idCategoria, categoria FROM categorias WHERE idCategoria = ?";
+
+            // Preparar la consulta
+            preparedStatement = conexion.prepareStatement(sql);
+            preparedStatement.setInt(1, idCategoria);
+
+            // Ejecutar la consulta
+            resultSet = preparedStatement.executeQuery();
+
+            // Si se encuentra una categoria, construir el objeto
+            if (resultSet.next()) {
+                int id = resultSet.getInt("idCategoria");
+                String nombreCategoria = resultSet.getString("categoria");
+                categoria = new Categoria(id, nombreCategoria);
+            } else {
+                System.out.println("No se encontró la categoria con ID: " + idCategoria);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error al buscar la categoria: " + e.getMessage());
+        } finally {
+            // Cerrar recursos
+            try {
+                if (resultSet != null) {
+                    resultSet.close();
+                }
+                if (preparedStatement != null) {
+                    preparedStatement.close();
+                }
+                if (conexion != null) {
+                    conexion.close();
+                }
+            } catch (SQLException e) {
+                System.err.println("Error al cerrar recursos: " + e.getMessage());
+            }
+        }
+
+        return categoria;
+    }
+
 }

@@ -46,6 +46,7 @@ public class SvAniadirArticulo extends HttpServlet {
         String descripcion = request.getParameter("descripcionArticuloAgregar");
         String precio = request.getParameter("precioArticuloAgregar");
         String stock = request.getParameter("stockArticuloAgregar");
+        String idCategoria = request.getParameter("categoriaArticuloAgregar");
         Part imagen = request.getPart("imagenProducto");
         
         
@@ -60,7 +61,7 @@ public class SvAniadirArticulo extends HttpServlet {
                 datosImagen = inputStream.readAllBytes();
             }
             //agregamos el producto
-            controladorArticulo.agregarProducto(nombre, descripcion, Double.parseDouble(precio), Integer.parseInt(stock), nombreImagen, datosImagen);
+            controladorArticulo.agregarProducto(nombre, descripcion, Double.parseDouble(precio), Integer.parseInt(stock), Integer.parseInt(idCategoria) ,nombreImagen, datosImagen);
         }
         response.sendRedirect("gestionArticulos.jsp");
     }

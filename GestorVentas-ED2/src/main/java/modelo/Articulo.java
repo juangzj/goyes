@@ -12,10 +12,11 @@ public class Articulo {
     private String descripcion;
     private double precio;
     private int cantidad;
+    private int idCategoria;
     private String nombreImagen;
     private byte[] imagen;
 
-    public Articulo(int id, String nombre, String descripcion, double precio, int cantidad, String nombreImagen, byte[] imagen) {
+    public Articulo(int id, String nombre, String descripcion, double precio, int cantidad, int idCategoria ,String nombreImagen, byte[] imagen) {
         this.id = id;
         this.nombre = nombre;
         this.descripcion = descripcion;
@@ -23,6 +24,7 @@ public class Articulo {
         this.cantidad = cantidad;
         this.nombreImagen = nombreImagen;
         this.imagen = imagen;
+        this.idCategoria = idCategoria;
     }
 
     public int getId() {
@@ -80,5 +82,14 @@ public class Articulo {
     public void setNombreImagen(String nombreImagen) {
         this.nombreImagen = nombreImagen;
     }
+
+    public int getIdCategoria() {
+        return idCategoria;
+    }
+
+    public void setIdCategoria(int idCategoria) {
+        this.idCategoria = idCategoria;
+    }
+    
 
 }

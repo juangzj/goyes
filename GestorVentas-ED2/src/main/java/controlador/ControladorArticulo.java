@@ -33,61 +33,36 @@ public class ControladorArticulo {
      */
     public List<Articulo> darArticulos() {
         List<Articulo> articulos = new ArrayList<>();
-        Connection conexion = null;
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
 
-        try {
-            // Obtener la conexión a la base de datos
-            conexion = Conectar.getConexion();
+        String sql = "SELECT id, nombre, descripcion, precio, cantidad_stock, nombre_imagen, imagen, idCategoria FROM articulos";
 
-            // SQL para seleccionar todos los artículos, incluyendo imagen y nombre de imagen
-            String sql = "SELECT id, nombre, descripcion, precio, cantidad_stock, nombre_imagen, imagen FROM articulos";
-
-            // Preparar la sentencia
-            pstmt = conexion.prepareStatement(sql);
-
-            // Ejecutar la consulta
-            rs = pstmt.executeQuery();
+        // Usar try-with-resources para manejar los recursos automáticamente
+        try (Connection conexion = Conectar.getConexion(); PreparedStatement pstmt = conexion.prepareStatement(sql); ResultSet rs = pstmt.executeQuery()) {
 
             // Iterar sobre los resultados
             while (rs.next()) {
-                // Crear un nuevo objeto Articulo usando el constructor
                 Articulo articulo = new Articulo(
                         rs.getInt("id"),
                         rs.getString("nombre"),
                         rs.getString("descripcion"),
                         rs.getDouble("precio"),
                         rs.getInt("cantidad_stock"),
+                        rs.getInt("idCategoria"),
                         rs.getString("nombre_imagen"),
-                        rs.getBytes("imagen") // Obtener la imagen en bytes
+                        rs.getBytes("imagen")
                 );
-
-                // Agregar el artículo a la lista
-                articulos.add(articulo);
+                articulos.add(articulo); // Agregar el artículo a la lista
             }
 
         } catch (SQLException e) {
-            e.printStackTrace(); // Manejar errores de SQL
-        } finally {
-            // Cerrar recursos
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-                if (pstmt != null) {
-                    pstmt.close();
-                }
-                if (conexion != null) {
-                    conexion.close();
-                }
-            } catch (SQLException e) {
-                e.printStackTrace(); // Manejar errores al cerrar la conexión
-            }
+            // Manejo de errores con un mensaje claro
+            System.err.println("Error al obtener los artículos: " + e.getMessage());
         }
 
         return articulos; // Retornar la lista de artículos
     }
+
+
 
     /**
      * Metodo para agregar un nuevo producto
@@ -96,11 +71,12 @@ public class ControladorArticulo {
      * @param descripcion
      * @param precio
      * @param cantidad
+     * @param idCategoria
      * @param nombreImagen
      * @param imagen
      * @return
      */
-    public boolean agregarProducto(String nombre, String descripcion, double precio, int cantidad, String nombreImagen, byte[] imagen) {
+    public boolean agregarProducto(String nombre, String descripcion, double precio, int cantidad, int idCategoria, String nombreImagen, byte[] imagen) {
         boolean productoAgregado = false;
         Connection conexion = null;
         PreparedStatement preparedStatement = null;
@@ -110,7 +86,8 @@ public class ControladorArticulo {
             conexion = Conectar.getConexion();
 
             // Definir la consulta SQL para insertar el producto
-            String sql = "INSERT INTO articulos (nombre, descripcion, precio, cantidad_stock, nombre_imagen, imagen) VALUES (?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO articulos (nombre, descripcion, precio, cantidad_stock, idCategoria, nombre_imagen, imagen) "
+                    + "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
             // Preparar la declaración
             preparedStatement = conexion.prepareStatement(sql);
@@ -118,8 +95,9 @@ public class ControladorArticulo {
             preparedStatement.setString(2, descripcion);
             preparedStatement.setDouble(3, precio);
             preparedStatement.setInt(4, cantidad);
-            preparedStatement.setString(5, nombreImagen);
-            preparedStatement.setBytes(6, imagen); // Establecer el campo imagen como byte[]
+            preparedStatement.setInt(5, idCategoria); // Relación con la categoría
+            preparedStatement.setString(6, nombreImagen);
+            preparedStatement.setBytes(7, imagen); // Establecer el campo imagen como byte[]
 
             // Ejecutar la inserción
             int filasAfectadas = preparedStatement.executeUpdate();
@@ -144,6 +122,7 @@ public class ControladorArticulo {
 
         return productoAgregado; // Retornar el resultado de la inserción
     }
+
 
     /**
      * Metodo para eliminar un articulo segun el id

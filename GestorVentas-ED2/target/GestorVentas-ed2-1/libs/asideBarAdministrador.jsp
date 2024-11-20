@@ -12,6 +12,9 @@
             <li class="nav-item">
                 <a class="nav-link" href="gestionCategorias.jsp">Gestión de Categorias</a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link" href="agregarArticulos.jsp"> Agregar un Articulo</a>
+            </li>
         </ul>
         <!-- Agregando los elementos de ajustes y cerrar sesión al final -->
         <ul class="nav flex-column mt-auto">
